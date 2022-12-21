@@ -79,7 +79,7 @@ class TransportBLE implements ProvTransport {
   Future<void> disconnect() async {
     bool check = await checkConnect();
     if (check) {
-      return await bluetoothDevice.disconnect();
+      return bluetoothDevice.disconnect();
     } else {
       return;
     }
