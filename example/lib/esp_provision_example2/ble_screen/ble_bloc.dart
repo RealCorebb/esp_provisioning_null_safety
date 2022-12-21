@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
 import 'package:rxdart/rxdart.dart';
 import '../ble_service.dart';
 import 'ble.dart';
@@ -12,7 +12,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
 
   BleBloc() : super(BleStateLoading()) {
     on<BleEventStart>(_mapStartToState);
-    on<BleEventDeviceUpdated>((event, emit) => emit(BleStateLoaded(List.from(event.bleDevices))));
+    on<BleEventDeviceUpdated>(
+        (event, emit) => emit(BleStateLoaded(List.from(event.bleDevices))));
     on<BleEventSelect>((event, emit) {
       bleService.select(event.selectedDevice['peripheral']);
     });
@@ -21,7 +22,8 @@ class BleBloc extends Bloc<BleEvent, BleState> {
     });
   }
 
-  Future<void> _mapStartToState(BleEventStart event, Emitter<BleState> emit) async {
+  Future<void> _mapStartToState(
+      BleEventStart event, Emitter<BleState> emit) async {
     var permissionIsGranted = await bleService.requestBlePermissions();
     if (!permissionIsGranted) {
       add(BleEventPermissionDenied());
@@ -37,17 +39,17 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         .scanBle()
         .debounce((_) => TimerStream(true, const Duration(milliseconds: 100)))
         .listen((List<ScanResult> scanResults) {
-          for (var scanResult in scanResults) {
-            var bleDevice = BleDevice(scanResult);
-            var idx = bleDevices.indexWhere((e) => e['id'] == bleDevice.id);
+      for (var scanResult in scanResults) {
+        var bleDevice = BleDevice(scanResult);
+        var idx = bleDevices.indexWhere((e) => e['id'] == bleDevice.id);
 
-            if (idx < 0) {
-              bleDevices.add(bleDevice.toMap());
-            } else {
-              bleDevices[idx] = bleDevice.toMap();
-            }
-            add(BleEventDeviceUpdated(bleDevices));
-          }
+        if (idx < 0) {
+          bleDevices.add(bleDevice.toMap());
+        } else {
+          bleDevices[idx] = bleDevice.toMap();
+        }
+        add(BleEventDeviceUpdated(bleDevices));
+      }
     });
   }
 

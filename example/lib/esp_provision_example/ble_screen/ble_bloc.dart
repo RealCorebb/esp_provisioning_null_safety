@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
 import 'package:rxdart/rxdart.dart';
 import '../ble_service.dart';
 import 'ble.dart';
@@ -56,19 +56,19 @@ class BleBloc extends Bloc<BleEvent, BleState> {
         .scanBle()
         .debounce((_) => TimerStream(true, Duration(milliseconds: 100)))
         .listen((List<ScanResult> scanResults) {
-          scanResults.forEach((ScanResult scanResult) {
-            var bleDevice = BleDevice(scanResult);
-            if (scanResult.advertisementData.localName != null) {
-              var idx = bleDevices.indexWhere((e) => e['id'] == bleDevice.id);
+      scanResults.forEach((ScanResult scanResult) {
+        var bleDevice = BleDevice(scanResult);
+        if (scanResult.advertisementData.localName != null) {
+          var idx = bleDevices.indexWhere((e) => e['id'] == bleDevice.id);
 
-              if (idx < 0) {
-                bleDevices.add(bleDevice.toMap());
-              } else {
-                bleDevices[idx] = bleDevice.toMap();
-              }
-              add(BleEventDeviceUpdated(bleDevices));
-            }
-          });
+          if (idx < 0) {
+            bleDevices.add(bleDevice.toMap());
+          } else {
+            bleDevices[idx] = bleDevice.toMap();
+          }
+          add(BleEventDeviceUpdated(bleDevices));
+        }
+      });
     });
   }
 

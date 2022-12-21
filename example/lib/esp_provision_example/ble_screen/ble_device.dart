@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
 
 class BleDevice {
   final BluetoothDevice bluetoothDevice;

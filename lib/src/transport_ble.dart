@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
 
 import 'transport.dart';
 
@@ -11,7 +11,7 @@ class TransportBLE implements ProvTransport {
   late Map<String, String> nuLookup;
   final Map<String, String> lockupTable;
   late List<BluetoothService> services;
-  
+
   static const int CONNECTION_TIMEOUT = 6000;
   static const int DISCOVERY_TIMEOUT = 6000;
 
@@ -37,26 +37,37 @@ class TransportBLE implements ProvTransport {
   }
 
   Future<bool> connect() async {
-    var isConnected = (await bluetoothDevice.state.first) == BluetoothDeviceState.connected;
+    var isConnected =
+        (await bluetoothDevice.state.first) == BluetoothDeviceState.connected;
     if (isConnected) {
       return Future.value(true);
     }
-    await bluetoothDevice.connect(autoConnect: false, timeout: Duration(milliseconds: CONNECTION_TIMEOUT)).timeout(Duration(milliseconds: CONNECTION_TIMEOUT + 800));
+    await bluetoothDevice
+        .connect(
+            autoConnect: false,
+            timeout: Duration(milliseconds: CONNECTION_TIMEOUT))
+        .timeout(Duration(milliseconds: CONNECTION_TIMEOUT + 800));
     services = await bluetoothDevice.services.first;
-    if (services.length == 0){
-      services = await bluetoothDevice.discoverServices().timeout(Duration(milliseconds: DISCOVERY_TIMEOUT));
+    if (services.length == 0) {
+      services = await bluetoothDevice
+          .discoverServices()
+          .timeout(Duration(milliseconds: DISCOVERY_TIMEOUT));
     }
-    isConnected = (await bluetoothDevice.state.first) == BluetoothDeviceState.connected;
+    isConnected =
+        (await bluetoothDevice.state.first) == BluetoothDeviceState.connected;
     return isConnected;
   }
-  
-  BluetoothCharacteristic findService(String serviceUuid, String charUuid){
-    BluetoothService service = services.firstWhere((service) => service.uuid == Guid(serviceUuid));
-    return service.characteristics.firstWhere((characteristic) => characteristic.uuid == Guid(charUuid));
+
+  BluetoothCharacteristic findService(String serviceUuid, String charUuid) {
+    BluetoothService service =
+        services.firstWhere((service) => service.uuid == Guid(serviceUuid));
+    return service.characteristics
+        .firstWhere((characteristic) => characteristic.uuid == Guid(charUuid));
   }
 
   Future<Uint8List> sendReceive(String epName, Uint8List? data) async {
-    BluetoothCharacteristic characteristic = findService(serviceUUID, nuLookup[epName]!);
+    BluetoothCharacteristic characteristic =
+        findService(serviceUUID, nuLookup[epName]!);
 
     if (data != null && data.length > 0) {
       await characteristic.write(data.toList(), withoutResponse: false);
@@ -67,15 +78,16 @@ class TransportBLE implements ProvTransport {
 
   Future<void> disconnect() async {
     bool check = await checkConnect();
-    if(check){  
+    if (check) {
       return await bluetoothDevice.disconnect();
-    }else{
+    } else {
       return;
     }
   }
 
   Future<bool> checkConnect() async {
-    BluetoothDeviceState bluetoothDeviceState = await bluetoothDevice.state.first;
+    BluetoothDeviceState bluetoothDeviceState =
+        await bluetoothDevice.state.first;
     return bluetoothDeviceState == BluetoothDeviceState.connected;
   }
 
