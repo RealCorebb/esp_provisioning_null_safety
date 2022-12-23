@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import '../ble_service.dart';
 import 'ble.dart';

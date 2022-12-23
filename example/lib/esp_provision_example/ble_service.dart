@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:logger/logger.dart';
 import 'package:esp_provisioning/esp_provisioning.dart';
 import 'package:permission_handler/permission_handler.dart';

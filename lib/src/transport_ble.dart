@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter_blue_plugin/flutter_blue_plugin.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import 'transport.dart';
 
